@@ -1,0 +1,48 @@
+# Mimic Configuration
+
+cooldown-in-seconds: 45    # Time between each Parrot noise/message/etc.
+chatter-range: 25          # Distance from Parrot needed to be to hear it.
+
+
+# DIALOG Setup
+# You can add as many items to the list as you'd like.
+# You can use <text> to use the mimic's stored messages.
+# Note: <text> also randomly shows the parrot's clue.
+
+types:
+
+  parrot:
+    click:
+      - "It's a parrot."
+      - "You pet the parrot."
+    texts:
+      - "A parrot squacks, '<text>'"
+      - "'<text>' …is that a parrot?"
+      - "You hear a parrot nearby, '*SQUAK*!'"
+      - "You hear a parrot nearby, '<text>'"
+      - "*BRR BRR BRR* …is that a parrot?"
+      - "*BAAAWK* *BAAAWK*"   
+
+  village idiot:
+    click:
+      - "Oh, it's just the Village Idiot… he's an idiot."
+      - "You slug the Village idiot in the arm. *OUCH!*"
+      - "The Village Idiot says to you, 'text'"
+    texts:
+      - "'Yarharrrharr!' …what the heck was that?"
+      - "The village idiot says, '<text>' …does that even make sense?"
+      - "'<text>' says the Village Idiot, in a drunken slur."
+
+
+  slime mimic:
+    click:
+      - "It's a jelly-like block of slime. Yuck!"
+      - "The slime is filled with all kinds of stuff. Who knows where its been?"
+    texts:
+      - "'<text'> …was that a slime mimic?"
+      - "You hear a slime mimic nearby, '<text>'"
+      - "*SQUISH* *SQUISH*"
+
+
+# Individual Mimic Settings (No need to edit, this will populate by itself!)
+

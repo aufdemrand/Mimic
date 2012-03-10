@@ -1,23 +1,7 @@
-Parrots for Citizens 2 by aufdemrand
-
-Parrots can be just for fun, or be used with questing to hold clues, and are
-meant to be used on Chicken NPCs, though could technically be any kind.
-Enderdragon parrots, anybody? (Joking! Probably not a good idea!)
-
-Parrots randomly store messages said in the local area and repeat them back.
-Parrots can also be fed a clue, information that it keeps and blurts out with 
-the normal chatter it has heard.
+Mimics for Citizens2
 
 
-Features:
 
-Parrots hold 5 messages automatically by listening to surrounding chatter.
-Parrots hold 1 message fed by the parrot owner.
-
-
-Commands:
-
-/parrot clue       # changes the clue
 
 
 Thanks: aPunch, fullwall, #citizens, and #bukkitdev
