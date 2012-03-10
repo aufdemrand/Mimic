@@ -1,0 +1,11 @@
+name: Parrot
+author: aufdemrand
+version: 0.5
+main: net.aufdemrand.parrot.Parrot
+depend:
+  - Citizens
+commands:
+  parrot:
+    description: Lists parrot commands.
+    usage: /parrot help
+    permission: parrot.basic
