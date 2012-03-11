@@ -18,25 +18,25 @@ public class MimicListener implements Listener {
 	public MimicListener(Mimic instance) { plugin = instance; }
 
 	@EventHandler
-	public void ParrotListener(PlayerChatEvent event) {     // Now we're listening to chat.
+	public void MimicListener(PlayerChatEvent event) {     // Now we're listening to chat.
 
 		Player player = event.getPlayer();   // Get the player name
 
 		Location PlayerLoc = player.getLocation();
-		List<net.citizensnpcs.api.npc.NPC> ParrotsInRange = getClosestParrots(PlayerLoc, player);
+		List<net.citizensnpcs.api.npc.NPC> MimicsInRange = getClosestMimics(PlayerLoc, player);
 
-		if (ParrotsInRange.isEmpty() == false) {
+		if (MimicsInRange.isEmpty() == false) {
 
-			for (int x=0; x< ParrotsInRange.size(); x++){   // Do for each instance of Parrot that is in range
+			for (int x=0; x< MimicsInRange.size(); x++){   // Do for each instance of Mimic that is in range
 
-				net.citizensnpcs.api.npc.NPC thisParrot = ParrotsInRange.get(x);   // Set specific parrot NPC data we're working with
+				net.citizensnpcs.api.npc.NPC thisMimic = MimicsInRange.get(x);   // Set specific mimic NPC data we're working with
 
-				Random r = new Random();                 // Random number for a chance of the Parrot listening.
+				Random r = new Random();                 // Random number for a chance of the Mimic listening.
 				int chanceofremembering = r.nextInt(3);  // 4 random numbers.
 				if(chanceofremembering==0) {             // 25% chance of random number being 0.
-					// player.sendMessage("*AAWWWK!*");     // Parrot hears the message.
+					// player.sendMessage("*AAWWWK!*");     // Mimic hears the message.
 
-					List<String> CurrentSavedMessages = plugin.getConfig().getStringList(thisParrot.getId() + ".savedmessages");
+					List<String> CurrentSavedMessages = plugin.getConfig().getStringList(thisMimic.getId() + ".savedmessages");
 
 					if (CurrentSavedMessages.size() >= 10) {				
 						Random s = new Random();             // Which key should we update?
@@ -44,14 +44,14 @@ public class MimicListener implements Listener {
 
 						CurrentSavedMessages.set(whichmessage, event.getMessage());
 
-						plugin.getConfig().set(thisParrot.getId() + ".savedmessages", CurrentSavedMessages);
+						plugin.getConfig().set(thisMimic.getId() + ".savedmessages", CurrentSavedMessages);
 						plugin.saveConfig();
 					}
 
 					else 
 
 						CurrentSavedMessages.add(0, event.getMessage());
-					plugin.getConfig().set(thisParrot.getId() + ".savedmessages", CurrentSavedMessages);
+					plugin.getConfig().set(thisMimic.getId() + ".savedmessages", CurrentSavedMessages);
 					plugin.saveConfig();	
 
 
@@ -62,31 +62,31 @@ public class MimicListener implements Listener {
 
 	}
 
-	public List<net.citizensnpcs.api.npc.NPC> getClosestParrots(Location PlayerLoc, Player player){  // Lets get the closest Parrot NPC entity data using the player entity data and the Player Location
+	public List<net.citizensnpcs.api.npc.NPC> getClosestMimics(Location PlayerLoc, Player player){  // Lets get the closest Mimic NPC entity data using the player entity data and the Player Location
 
-		Collection<net.citizensnpcs.api.npc.NPC> ParrotNPCs = CitizensAPI.getNPCManager().getNPCs(MimicCharacter.class); // Get a collection of Parrot NPCs to check against
+		Collection<net.citizensnpcs.api.npc.NPC> MimicNPCs = CitizensAPI.getNPCManager().getNPCs(MimicCharacter.class); // Get a collection of Mimic NPCs to check against
 
-		List<net.citizensnpcs.api.npc.NPC> ParrotList = new ArrayList(ParrotNPCs); // Turn Collection returned by Citizens into an Arraylist
-		List<net.citizensnpcs.api.npc.NPC> ParrotsInRange = new ArrayList();  // Initialize ArrayList of Parrots within config "chatter-range" of Player
+		List<net.citizensnpcs.api.npc.NPC> MimicList = new ArrayList(MimicNPCs); // Turn Collection returned by Citizens into an Arraylist
+		List<net.citizensnpcs.api.npc.NPC> MimicsInRange = new ArrayList();  // Initialize ArrayList of Mimics within config "chatter-range" of Player
 
-		int NumberofParrotsInRange = 0;
-
-
-		if (ParrotNPCs.isEmpty() == false) {  // Let's do this ONLY IF we have Parrots actually in the world
+		int NumberofMimicsInRange = 0;
 
 
+		if (MimicNPCs.isEmpty() == false) {  // Let's do this ONLY IF we have Mimics actually in the world
 
-			// Start Enhanced Loop to check location distance of Parrot NPCs to the Player
 
-			for (int z=0; z< ParrotList.size(); z++){   // Do for each instance of Parrot
-				net.citizensnpcs.api.npc.NPC thisParrot = ParrotList.get(z);   // Set specific parrot for comparison
 
-				if (player.getWorld() == thisParrot.getBukkitEntity().getWorld()) {
+			// Start Enhanced Loop to check location distance of Mimic NPCs to the Player
 
-					if (PlayerLoc.distance(thisParrot.getBukkitEntity().getLocation()) <= plugin.getConfig().getInt("chatter-range", 25)) {  // If Player distance is less than config "chatter-range" of thisParrot
+			for (int z=0; z< MimicList.size(); z++){   // Do for each instance of Mimic
+				net.citizensnpcs.api.npc.NPC thisMimic = MimicList.get(z);   // Set specific mimic for comparison
 
-						ParrotsInRange.add(NumberofParrotsInRange, thisParrot);  // Then add this parrot to the arrayList ParrotsInRange
-						NumberofParrotsInRange++;
+				if (player.getWorld() == thisMimic.getBukkitEntity().getWorld()) {
+
+					if (PlayerLoc.distance(thisMimic.getBukkitEntity().getLocation()) <= plugin.getConfig().getInt("chatter-range", 25)) {  // If Player distance is less than config "chatter-range" of thisMimic
+
+						MimicsInRange.add(NumberofMimicsInRange, thisMimic);  // Then add this mimic to the arrayList MimicsInRange
+						NumberofMimicsInRange++;
 					}
 
 				}
@@ -95,9 +95,9 @@ public class MimicListener implements Listener {
 
 
 
-		}  // GREAT! Now we have all the Parrots in range!
+		}  // GREAT! Now we have all the Mimics in range!
 
-		return ParrotsInRange;            // Lets return them to the program 
+		return MimicsInRange;            // Lets return them to the program 
 	}
 
 

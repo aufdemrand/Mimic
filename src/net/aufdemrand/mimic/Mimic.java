@@ -26,6 +26,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Mimic extends JavaPlugin {
 
 	
+	// COMMANDS
+	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String cmdLabel, String[] args) {
 		if (!(sender instanceof Player)) {
@@ -42,8 +44,16 @@ public class Mimic extends JavaPlugin {
 
 		if (args[0].equalsIgnoreCase("help")) {
 			player.sendMessage(ChatColor.GOLD + "----- Mimic -----");
-			player.sendMessage(ChatColor.GREEN + "/parrot clue" + ChatColor.GRAY
-					+ " -- Sets the clue for the mimic.");
+			player.sendMessage(ChatColor.GRAY + "/mimic view types");
+			player.sendMessage(ChatColor.GRAY + "  -- Views the types of mimics available.");
+			player.sendMessage(ChatColor.GRAY + "/mimic set type [type]");
+			player.sendMessage(ChatColor.GRAY + " -- Sets the type of the mimic.");
+			player.sendMessage(ChatColor.GRAY + "/mimic set clue [clue]");
+			player.sendMessage(ChatColor.GRAY + "  -- Sets the clue for the mimic.");
+			player.sendMessage(ChatColor.GRAY + "/mimic view clue");
+			player.sendMessage(ChatColor.GRAY + "  -- Views the clue for the mimic.");
+			player.sendMessage(ChatColor.GRAY + "/mimic view messages");
+			player.sendMessage(ChatColor.GRAY + "  -- Views the messages stored in the mimic.");
 			return true;
 		} 
 
@@ -52,15 +62,13 @@ public class Mimic extends JavaPlugin {
 			return true;
 		}
 
-
 		// Basics over, NPC Selected... but which one?
 
 		int NPCSelected = player.getMetadata("selected").get(0).asInt();  // Gets NPC Citizens ID of selected
 		NPC ThisNPC = CitizensAPI.getNPCManager().getNPC(player.getMetadata("selected").get(0).asInt());      // Gets NPC Citizens Entity of Selected
 		Entity ThisBukkitNPC = ThisNPC.getBukkitEntity();  // Gets Bukkit Entity of Selected
 
-
-		// Parrot Selected... now what?
+		// Citizens NPC Selected... now what?
 
 		if (!ThisNPC.getTrait(Owner.class).getOwner().equals(player.getName())) {
 			player.sendMessage(ChatColor.RED + "You must be the owner of the mimic to execute commands.");
@@ -107,7 +115,7 @@ public class Mimic extends JavaPlugin {
 		saveConfig();  
 
 		
-		CitizensAPI.getCharacterManager().registerCharacter(new CharacterFactory(MimicCharacter.class).withName("parrot").withTypes(EntityType.CHICKEN));
+		CitizensAPI.getCharacterManager().registerCharacter(new CharacterFactory(MimicCharacter.class).withName("mimic"));
 		getServer().getPluginManager().registerEvents(new MimicListener(this), this);
 
 		int ParrotCooldown = getConfig().getInt("cooldown-in-seconds", 20);

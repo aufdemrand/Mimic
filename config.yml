@@ -39,7 +39,7 @@ types:
       - "It's a jelly-like block of slime. Yuck!"
       - "The slime is filled with all kinds of stuff. Who knows where its been?"
     texts:
-      - "'<text'> Éwas that a slime mimic?"
+      - "'<text>' Éwas that a slime mimic?"
       - "You hear a slime mimic nearby, '<text>'"
       - "*SQUISH* *SQUISH*"
 
