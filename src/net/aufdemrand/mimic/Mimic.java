@@ -43,16 +43,16 @@ public class Mimic extends JavaPlugin {
 
 		if (args[0].equalsIgnoreCase("help")) {
 			player.sendMessage(ChatColor.GOLD + "----- Mimic -----");
-			player.sendMessage(ChatColor.GRAY + "/mimic view types");
-			player.sendMessage(ChatColor.GRAY + "  -- Views the types of mimics available.");
-			player.sendMessage(ChatColor.GRAY + "/mimic set type [type]");
-			player.sendMessage(ChatColor.GRAY + " -- Sets the type of the mimic.");
-			player.sendMessage(ChatColor.GRAY + "/mimic set clue [clue]");
-			player.sendMessage(ChatColor.GRAY + "  -- Sets the clue for the mimic.");
-			player.sendMessage(ChatColor.GRAY + "/mimic view clue");
-			player.sendMessage(ChatColor.GRAY + "  -- Views the clue for the mimic.");
-			player.sendMessage(ChatColor.GRAY + "/mimic view messages");
-			player.sendMessage(ChatColor.GRAY + "  -- Views the messages stored in the mimic.");
+			player.sendMessage(ChatColor.GOLD + "/mimic view types");
+			player.sendMessage(ChatColor.GOLD + "  -- Views the types of mimics available.");
+			player.sendMessage(ChatColor.GOLD + "/mimic set type [type]");
+			player.sendMessage(ChatColor.GOLD + " -- Sets the type of the mimic.");
+			player.sendMessage(ChatColor.GOLD + "/mimic set clue [clue]");
+			player.sendMessage(ChatColor.GOLD + "  -- Sets the clue for the mimic.");
+			player.sendMessage(ChatColor.GOLD + "/mimic view clue");
+			player.sendMessage(ChatColor.GOLD + "  -- Views the clue for the mimic.");
+			player.sendMessage(ChatColor.GOLD + "/mimic reset messages");
+			player.sendMessage(ChatColor.GOLD + "  -- Resets the messages stored in the mimic.");
 			return true;
 		} 
 
@@ -82,21 +82,84 @@ public class Mimic extends JavaPlugin {
 		// Commands
 
 		if (args[0].equalsIgnoreCase("save")) {
-			player.sendMessage("Settings saved.");
+			player.sendMessage(ChatColor.GOLD + "Settings saved.");
 			saveConfig();
 			return true;
 		}
-		else if (args[0].equalsIgnoreCase("clue")) {
+		else if (args[0].equalsIgnoreCase("set") && args[1].equalsIgnoreCase("clue")) {
 
 			String NewClue = "";
-			for(int i = 1; i < args.length; i++) { if (i != args.length - 1) {NewClue = NewClue + args[i] + " ";} else {NewClue = NewClue + args[i];} }
+			for(int i = 2; i < args.length; i++) { if (i != args.length - 1) {NewClue = NewClue + args[i] + " ";} else {NewClue = NewClue + args[i];} }
 
 			getConfig().set(ThisNPC.getId() + ".clue", NewClue.toString());  // Set the key in the config.
 			saveConfig();                   // Save the config.
-			player.sendMessage(ChatColor.GREEN + "Clue saved.");   // Talk to the player.
+			player.sendMessage(ChatColor.GOLD + "Clue saved.");   // Talk to the player.
 
 			return true;
 		}
+
+		else if (args[0].equalsIgnoreCase("set") && args[1].equalsIgnoreCase("type")) {
+
+			String NewType = "";
+			for(int i = 2; i < args.length; i++) { if (i != args.length - 1) {NewType = NewType + args[i] + " ";} else {NewType = NewType + args[i];} }
+
+			List<String> ValididyCheck = getConfig().getStringList("voice types.list");
+
+			boolean isTypeValid = false;
+
+			for (int x = 0; x < ValididyCheck.size(); x++) { if (NewType.equalsIgnoreCase(ValididyCheck.get(x))) { isTypeValid = true; NewType = ValididyCheck.get(x);} }
+
+			if (isTypeValid == true) {
+
+				getConfig().set(ThisNPC.getId() + ".type", NewType);  // Set the key in the config.
+				saveConfig();                   // Save the config.
+				player.sendMessage(ChatColor.GOLD + "Type set to " + NewType + ".");   // Talk to the player.
+
+				return true;
+			}
+
+
+			else { player.sendMessage(ChatColor.RED + NewType + " is an invalid Mimic type."); }
+		}
+
+
+		else if (args[0].equalsIgnoreCase("view") && args[1].equalsIgnoreCase("types")) {
+
+			List<String> TypesCheck = getConfig().getStringList("voice types.list");
+
+			String TypeString = "";
+
+			for (int x = 0; x < TypesCheck.size(); x++) { if (x != args.length - 1) {TypeString = TypeString + args[x] + ", ";} else {TypeString = TypeString + args[x];}  }
+
+
+			player.sendMessage(ChatColor.GOLD + "Available types: " + TypeString + ".");   // Talk to the player.
+
+			return true;
+		}
+
+		else if (args[0].equalsIgnoreCase("view") && args[1].equalsIgnoreCase("clue")) {
+
+			String theClue = getConfig().getString(ThisNPC.getId() + ".clue"); 
+
+			if (theClue == null) { player.sendMessage(ChatColor.GOLD + "Clue not set. Use /mimic set clue [clue].");  }
+			else {	player.sendMessage(ChatColor.GOLD + "Clue: " + theClue); }
+
+			return true;
+		}
+
+		
+		else if (args[0].equalsIgnoreCase("reset") && args[1].equalsIgnoreCase("messages")) {
+
+			
+			getConfig().set(ThisNPC.getId() + ".messages", null);
+			String theClue = getConfig().getString(ThisNPC.getId() + ".clue"); 
+
+			if (theClue == null) { player.sendMessage(ChatColor.GOLD + "Clue not set. Use /mimic set clue [clue].");  }
+			else {	player.sendMessage(ChatColor.GOLD + "Clue: " + theClue); }
+
+			return true;
+		}
+
 
 		return true;
 	}
@@ -119,6 +182,8 @@ public class Mimic extends JavaPlugin {
 	public void onEnable() {
 
 		getLogger().log(Level.INFO, "Mimic" + getDescription().getVersion() + ": Loading Config." );
+
+		getConfig().options().copyDefaults(true);
 
 		int ConfigCooldownInSeconds = getConfig().getInt("cooldown-in-seconds");
 		int ConfigClickCooldownInSeconds = getConfig().getInt("click-cooldown-in-seconds", 5);
@@ -168,41 +233,55 @@ public class Mimic extends JavaPlugin {
 
 						if (!PlayersInRangeofMimic.isEmpty()) {  // Only doing if players are in range of a Mimic
 
-							// Get type of mimic for chatter
 							String MimicType = getConfig().getString(thisMimic.getId() + ".type");
-		//					getServer().broadcastMessage("" + MimicType);
-							List<String> MimicTypeMessages = getConfig().getStringList("types." + MimicType + ".texts");
 
-							Random u = new Random(); //
-							int WhatShouldWeDo = u.nextInt(MimicTypeMessages.size());
+							if (MimicType != null) {
+								// Get type of mimic for chatter
 
-							Random v = new Random();
-							int ClueOrMessage = u.nextInt(4);
+								//					getServer().broadcastMessage("" + MimicType);
+								List<String> MimicTypeMessages = getConfig().getStringList("talk types." + MimicType + ".texts");
 
-							// Stored Message coming through.... Mimic-style
-							List<String> StoredMimicMessages = getConfig().getStringList(thisMimic.getId() + ".savedmessages");
-							Random t = new Random();             // Which key should we read?
-							int whichmessage = t.nextInt(StoredMimicMessages.size()); 
+								if (MimicTypeMessages.isEmpty() == false) {
 
-							String theMessage;
-							
-							if (ClueOrMessage == 0) { // do clue 								
-								theMessage = MimicTypeMessages.get(WhatShouldWeDo).toString().replace("<text>", getConfig().getString(thisMimic.getId() + ".clue"));
+									Random u = new Random(); //
+									int WhatShouldWeDo = u.nextInt(MimicTypeMessages.size());
+
+									Random v = new Random();
+									int ClueOrMessage = u.nextInt(4);
+
+									// Stored Message coming through.... Mimic-style
+									List<String> StoredMimicMessages = getConfig().getStringList(thisMimic.getId() + ".savedmessages");
+
+									if (!StoredMimicMessages.isEmpty()) {
+
+										Random t = new Random();             // Which key should we read?
+										int whichmessage = t.nextInt(StoredMimicMessages.size()); 
+
+										String theMessage;
+
+										if (ClueOrMessage == 0) { // do clue 								
+
+											String theClue = getConfig().getString(thisMimic.getId() + ".clue");
+
+											if (theClue == null) { theMessage = MimicTypeMessages.get(WhatShouldWeDo).toString().replace("<text>", StoredMimicMessages.get(whichmessage).toString()); }
+											else {theMessage = MimicTypeMessages.get(WhatShouldWeDo).toString().replace("<text>", getConfig().getString(thisMimic.getId() + ".clue"));	}
+										}
+										else { // do message
+											theMessage = MimicTypeMessages.get(WhatShouldWeDo).toString().replace("<text>", StoredMimicMessages.get(whichmessage).toString());
+										}
+
+
+										if (theMessage != null) {
+
+											//			theMessage = WordWrapper(theMessage);
+
+											for (int w=0; w< PlayersInRangeofMimic.size(); w++) { 
+												PlayersInRangeofMimic.get(w).sendMessage(theMessage); 
+											}
+										}
+									}
+								}
 							}
-							else { // do message
-								theMessage = MimicTypeMessages.get(WhatShouldWeDo).toString().replace("<text>", StoredMimicMessages.get(whichmessage).toString());
-							}
-
-												
-							if (theMessage != null) {
-								
-					//			theMessage = WordWrapper(theMessage);
-							
-								for (int w=0; w< PlayersInRangeofMimic.size(); w++) { 
-								PlayersInRangeofMimic.get(w).sendMessage(theMessage); 
-							}}
-
-
 						} // END Players Empty Check
 
 					} // END PLAYERS IN RANGE

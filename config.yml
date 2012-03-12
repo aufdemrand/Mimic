@@ -14,13 +14,13 @@ use-smart-wrap: True          # Wraps text spanning multiple lines smartly.
 # You can use <text> to use the mimic's stored messages.
 # Note: <text> also randomly shows the mimic's clue.
 
-types:
+talk types:
   list:               # List each mimic type.
     - parrot
     - village idiot
     - slime mimic
 
-  npc defaults:       # You can specify mimic type defaults for each npc type
+  NPC defaults:       # You can specify mimic type defaults for each npc type
     Slime: slime mimic
     Chicken: parrot
     Villager: village idiot
