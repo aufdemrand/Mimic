@@ -1,11 +1,11 @@
-name: Parrot
+name: Mimic
 author: aufdemrand
-version: 0.5
-main: net.aufdemrand.parrot.Parrot
+version: 0.6
+main: net.aufdemrand.mimic.Mimic
 depend:
   - Citizens
 commands:
-  parrot:
+  mimic:
     description: Lists parrot commands.
-    usage: /parrot help
-    permission: parrot.basic
+    usage: /mimic help
+    permission: mimic.basic

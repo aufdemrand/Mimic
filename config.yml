@@ -1,45 +1,60 @@
 # Mimic Configuration
 
-cooldown-in-seconds: 45    # Time between each Parrot noise/message/etc.
-chatter-range: 25          # Distance from Parrot needed to be to hear it.
+cooldown-in-seconds: 45       # Time between each message/etc update timer. 
+                              #   (Recommended 30-90)
+click-cooldown-in-seconds: 5
+chatter-range: 25             # Distance from Mimic needed to be to hear it.
+                              #   (Recommended 10-30)
+text-style: Normal            # Available: Sentence Case, Lower Case, Upper Case, Normal
+use-smart-wrap: True          # Wraps text spanning multiple lines smartly.
 
 
-# DIALOG Setup
+# TYPES/DIALOG Setup
 # You can add as many items to the list as you'd like.
 # You can use <text> to use the mimic's stored messages.
-# Note: <text> also randomly shows the parrot's clue.
+# Note: <text> also randomly shows the mimic's clue.
 
 types:
+  list:               # List each mimic type.
+    - parrot
+    - village idiot
+    - slime mimic
 
+  npc defaults:       # You can specify mimic type defaults for each npc type
+    Slime: slime mimic
+    Chicken: parrot
+    Villager: village idiot
+
+
+                      # And now in detail...
   parrot:
-    click:
+    on click:         # Texts on click
       - "It's a parrot."
-      - "You pet the parrot."
-    texts:
+      - "You pet the parrot. *BAAAWK!*"
+    texts:            # Texts that trigger randomly.
       - "A parrot squacks, '<text>'"
-      - "'<text>' …is that a parrot?"
+      - "'<text>' ...is that a parrot?"
       - "You hear a parrot nearby, '*SQUAK*!'"
       - "You hear a parrot nearby, '<text>'"
-      - "*BRR BRR BRR* …is that a parrot?"
+      - "*BRR BRR BRR* ...is that a parrot?"
       - "*BAAAWK* *BAAAWK*"   
 
   village idiot:
-    click:
-      - "Oh, it's just the Village Idiot… he's an idiot."
+    on click:
+      - "Oh, it's just the Village Idiot... he's an idiot."
       - "You slug the Village idiot in the arm. *OUCH!*"
       - "The Village Idiot says to you, 'text'"
     texts:
-      - "'Yarharrrharr!' …what the heck was that?"
-      - "The village idiot says, '<text>' …does that even make sense?"
+      - "'Yarharrrharr!' ...what the heck was that?"
+      - "The village idiot says, '<text>' ...does that even make sense?"
       - "'<text>' says the Village Idiot, in a drunken slur."
-
 
   slime mimic:
     click:
       - "It's a jelly-like block of slime. Yuck!"
       - "The slime is filled with all kinds of stuff. Who knows where its been?"
     texts:
-      - "'<text>' …was that a slime mimic?"
+      - "'<text>' ...was that a slime mimic?"
       - "You hear a slime mimic nearby, '<text>'"
       - "*SQUISH* *SQUISH*"
 

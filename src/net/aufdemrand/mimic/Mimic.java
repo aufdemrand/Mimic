@@ -25,9 +25,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Mimic extends JavaPlugin {
 
-	
 	// COMMANDS
-	
+
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String cmdLabel, String[] args) {
 		if (!(sender instanceof Player)) {
@@ -102,92 +101,107 @@ public class Mimic extends JavaPlugin {
 		return true;
 	}
 
+
 	@Override
 	public void onDisable() {
-		getLogger().log(Level.INFO, " v" + getDescription().getVersion() + " disabled.");
-		
+		getLogger().log(Level.INFO, "Mimic" + getDescription().getVersion() + ": Settings Saved." );
+		getLogger().log(Level.INFO, "Mimic" + getDescription().getVersion() + ": Sucessfully Unloaded.");
 	}
+
+	public int ConfigCooldownInSeconds;
+	public int ConfigChatterRange;
+	public int ConfigClickCooldownInSeconds;
+	public boolean ConfigUseSmartWrap;
+	public String ConfigTextStyle;
+	public List<String> ConfigTypes;
 
 	@Override
 	public void onEnable() {
 
-		this.getConfig().options().copyDefaults(true);
-		saveConfig();  
+		getLogger().log(Level.INFO, "Mimic" + getDescription().getVersion() + ": Loading Config." );
 
-		
-		CitizensAPI.getCharacterManager().registerCharacter(new CharacterFactory(MimicCharacter.class).withName("mimic"));
+		int ConfigCooldownInSeconds = getConfig().getInt("cooldown-in-seconds");
+		int ConfigClickCooldownInSeconds = getConfig().getInt("click-cooldown-in-seconds", 5);
+		final int ConfigChatterRange = getConfig().getInt("chatter-range", 25);
+		boolean ConfigUseSmartWrap = getConfig().getBoolean("use-smart-wrap", true);
+		String ConfigTextStyle = getConfig().getString("text-style", "Normal");
+		List<String> ConfigTypes = getConfig().getStringList("types.list");
+
+		getLogger().log(Level.INFO, "Mimic" + getDescription().getVersion() + ": Loading Character." );
+		CitizensAPI.getCharacterManager().registerCharacter(new CharacterFactory(MimicCharacter.class).withName("mimic").withTypes(EntityType.CHICKEN, EntityType.SPIDER));
+
+		getLogger().log(Level.INFO, "Mimic" + getDescription().getVersion() + ": Loading Listener." );
 		getServer().getPluginManager().registerEvents(new MimicListener(this), this);
 
-		int ParrotCooldown = getConfig().getInt("cooldown-in-seconds", 20);
-
-
-
+		getLogger().log(Level.INFO, "Mimic" + getDescription().getVersion() + ": Loading Chatter Engine." );
 		this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
 
 			public void run() {
 
-				Collection<net.citizensnpcs.api.npc.NPC> ParrotNPCs = CitizensAPI.getNPCManager().getNPCs(MimicCharacter.class); // Get a collection of Parrot NPCs to check against
-				List<net.citizensnpcs.api.npc.NPC> ParrotList = new ArrayList(ParrotNPCs); // Turn Collection returned by Citizens into an Arraylist to easily work with
-				List<net.citizensnpcs.api.npc.NPC> ParrotsInRange = new ArrayList();  // Initialize ArrayList of Parrots within config "chatter-range" of Player
+				Collection<net.citizensnpcs.api.npc.NPC> MimicNPCs = CitizensAPI.getNPCManager().getNPCs(MimicCharacter.class); // Get a collection of Mimic NPCs to check against
+				List<net.citizensnpcs.api.npc.NPC> MimicList = new ArrayList(MimicNPCs); // Turn Collection returned by Citizens into an Arraylist to easily work with
+				List<net.citizensnpcs.api.npc.NPC> MimicsInRange = new ArrayList();  // Initialize ArrayList of Mimics within config "chatter-range" of Player
 
-				if (ParrotNPCs.isEmpty() == false) {  // Let's do this ONLY IF we have Parrots actually in the world...
+				if (MimicNPCs.isEmpty() == false) {  // Let's do this ONLY IF we have Mimics actually in the world...
 
-					// Start Enhanced Loop to check location distance of Parrot NPCs to the Player
+					// Start Enhanced Loop to check location distance of Mimic NPCs to the Player
 
-					for (int z=0; z< ParrotList.size(); z++){   // Do for each instance of Parrot
+					for (int z=0; z< MimicList.size(); z++){   // Do for each instance of Mimic
 
-						net.citizensnpcs.api.npc.NPC thisParrot = ParrotList.get(z);   // Set specific parrot for comparison
-						List<Player> PlayersInRangeofParrot = new ArrayList(); // List of players
+						net.citizensnpcs.api.npc.NPC thisMimic = MimicList.get(z);   // Set specific mimic for comparison
+						List<Player> PlayersInRangeofMimic = new ArrayList(); // List of players
 
 						int PlayerCount = 0; // Used for counting players, sending messages, etc.
 
 						for(Player player : getServer().getOnlinePlayers()) {
 							Location playerLocation = player.getLocation();						
 
-							if (player.getWorld() == thisParrot.getBukkitEntity().getWorld()) {  // Check if they are in the same world.
+							if (player.getWorld() == thisMimic.getBukkitEntity().getWorld()) {  // Check if they are in the same world.
 
-								if (playerLocation.distance(thisParrot.getBukkitEntity().getLocation()) <= getConfig().getInt("chatter-range", 25)) { PlayersInRangeofParrot.add(PlayerCount, player); } // If Player distance is less than config "chatter-range" of thisParrot
+								if (playerLocation.distance(thisMimic.getBukkitEntity().getLocation()) <= ConfigChatterRange) { PlayersInRangeofMimic.add(PlayerCount, player); } // If Player distance is less than config "chatter-range" of thisMimic
 
 							}
 
-						} // End getting players in range of Parrot .. now stored in PlayersInRangeofParrot
+						} // End getting players in range of Mimic .. now stored in PlayersInRangeofMimic
 
 						// Now, which messages to send to the players in range?
-						// Lets say, 20% chance of being the clue, and 20% chance of being Parrot sounds, and 60% chance of being a stored message
 
-						if (!PlayersInRangeofParrot.isEmpty()) {  // Only doing if players are in range of a Parrot
+						if (!PlayersInRangeofMimic.isEmpty()) {  // Only doing if players are in range of a Mimic
+
+							// Get type of mimic for chatter
+							String MimicType = getConfig().getString(thisMimic.getId() + ".type");
+		//					getServer().broadcastMessage("" + MimicType);
+							List<String> MimicTypeMessages = getConfig().getStringList("types." + MimicType + ".texts");
 
 							Random u = new Random(); //
-							int WhatShouldWeDo = u.nextInt(10);
+							int WhatShouldWeDo = u.nextInt(MimicTypeMessages.size());
 
-							if (WhatShouldWeDo == 0 || WhatShouldWeDo == 1) { // Display the clue! 
-								String theMessage = getConfig().getString(thisParrot.getId() + ".clue");  // Get the clue specific to the parrot
-								if (theMessage != null) { for (int w=0; w< PlayersInRangeofParrot.size(); w++){ PlayersInRangeofParrot.get(w).sendMessage("A parrot squaks, '" + theMessage + "'"); }} 						
+							Random v = new Random();
+							int ClueOrMessage = u.nextInt(4);
+
+							// Stored Message coming through.... Mimic-style
+							List<String> StoredMimicMessages = getConfig().getStringList(thisMimic.getId() + ".savedmessages");
+							Random t = new Random();             // Which key should we read?
+							int whichmessage = t.nextInt(StoredMimicMessages.size()); 
+
+							String theMessage;
+							
+							if (ClueOrMessage == 0) { // do clue 								
+								theMessage = MimicTypeMessages.get(WhatShouldWeDo).toString().replace("<text>", getConfig().getString(thisMimic.getId() + ".clue"));
+							}
+							else { // do message
+								theMessage = MimicTypeMessages.get(WhatShouldWeDo).toString().replace("<text>", StoredMimicMessages.get(whichmessage).toString());
 							}
 
-							else if (WhatShouldWeDo == 2 || WhatShouldWeDo == 3) { // PARROT SOUNDS! 
-								List<String> ParrotSounds = getConfig().getStringList("chatter");
-								Random t = new Random();             // Which sound should we read?
-								int whichmessage = t.nextInt(ParrotSounds.size());
-								if (ParrotSounds != null) { for (int w=0; w< PlayersInRangeofParrot.size(); w++){ PlayersInRangeofParrot.get(w).sendMessage(ParrotSounds.get(whichmessage).toString()); }} 						
-							}
+												
+							if (theMessage != null) {
+								
+					//			theMessage = WordWrapper(theMessage);
+							
+								for (int w=0; w< PlayersInRangeofMimic.size(); w++) { 
+								PlayersInRangeofMimic.get(w).sendMessage(theMessage); 
+							}}
 
-							else { // Stored Message coming through.... Parrot-style
-								List<String> StoredParrotMessages = getConfig().getStringList(thisParrot.getId() + ".savedmessages");
-								Random t = new Random();             // Which key should we read?
-								if (StoredParrotMessages.size() > 0) { 
-									int whichmessage = t.nextInt(StoredParrotMessages.size());
-									for (int w=0; w< PlayersInRangeofParrot.size(); w++){ PlayersInRangeofParrot.get(w).sendMessage("A parrot squaks, '" + StoredParrotMessages.get(whichmessage).toString() + "'"); }}
-								else { // No stored message? Parrot sounds instead.
-
-									List<String> ParrotSounds = getConfig().getStringList("chatter");
-									Random c = new Random();             // Which sound should we read?
-									int whichmessagenow = c.nextInt(ParrotSounds.size());
-									// getServer().broadcastMessage("" + ParrotSounds.size());  // Debug
-									if (ParrotSounds != null) { for (int w=0; w< PlayersInRangeofParrot.size(); w++){ PlayersInRangeofParrot.get(w).sendMessage(ParrotSounds.get(whichmessagenow).toString()); }}
-
-								} 						
-							}
 
 						} // END Players Empty Check
 
@@ -197,10 +211,9 @@ public class Mimic extends JavaPlugin {
 
 			} // END CHECK OF PARROTS
 
-		}, ParrotCooldown * 20, ParrotCooldown * 20);
+		}, ConfigCooldownInSeconds * 20, ConfigCooldownInSeconds * 20);
 
-		getLogger().log(Level.INFO, " v" + getDescription().getVersion() + " enabled.");
-
+		getLogger().log(Level.INFO, "Mimic" + getDescription().getVersion() + ": Sucessfully Enabled." );
 	}
-
 }
+
