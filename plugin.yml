@@ -6,6 +6,6 @@ depend:
   - Citizens
 commands:
   mimic:
-    description: Lists parrot commands.
+    description: Lists mimic commands.
     usage: /mimic help
     permission: mimic.basic

@@ -3,7 +3,6 @@ package net.aufdemrand.mimic;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 import net.citizensnpcs.api.CitizensAPI;
@@ -17,10 +16,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Mimic extends JavaPlugin {
@@ -63,9 +60,7 @@ public class Mimic extends JavaPlugin {
 
 		// Basics over, NPC Selected... but which one?
 
-		int NPCSelected = player.getMetadata("selected").get(0).asInt();  // Gets NPC Citizens ID of selected
 		NPC ThisNPC = CitizensAPI.getNPCManager().getNPC(player.getMetadata("selected").get(0).asInt());      // Gets NPC Citizens Entity of Selected
-		Entity ThisBukkitNPC = ThisNPC.getBukkitEntity();  // Gets Bukkit Entity of Selected
 
 		// Citizens NPC Selected... now what?
 
@@ -190,7 +185,6 @@ public class Mimic extends JavaPlugin {
 		final int ConfigChatterRange = getConfig().getInt("chatter-range", 25);
 		boolean ConfigUseSmartWrap = getConfig().getBoolean("use-smart-wrap", true);
 		String ConfigTextStyle = getConfig().getString("text-style", "Normal");
-		List<String> ConfigTypes = getConfig().getStringList("types.list");
 
 		getLogger().log(Level.INFO, "Mimic" + getDescription().getVersion() + ": Loading Character." );
 		CitizensAPI.getCharacterManager().registerCharacter(new CharacterFactory(MimicCharacter.class).withName("mimic").withTypes(EntityType.CHICKEN, EntityType.SPIDER));
@@ -204,8 +198,7 @@ public class Mimic extends JavaPlugin {
 			public void run() {
 
 				Collection<net.citizensnpcs.api.npc.NPC> MimicNPCs = CitizensAPI.getNPCManager().getNPCs(MimicCharacter.class); // Get a collection of Mimic NPCs to check against
-				List<net.citizensnpcs.api.npc.NPC> MimicList = new ArrayList(MimicNPCs); // Turn Collection returned by Citizens into an Arraylist to easily work with
-				List<net.citizensnpcs.api.npc.NPC> MimicsInRange = new ArrayList();  // Initialize ArrayList of Mimics within config "chatter-range" of Player
+				List<net.citizensnpcs.api.npc.NPC> MimicList = new ArrayList<NPC>(MimicNPCs); // Turn Collection returned by Citizens into an Arraylist to easily work with
 
 				if (MimicNPCs.isEmpty() == false) {  // Let's do this ONLY IF we have Mimics actually in the world...
 
@@ -214,7 +207,7 @@ public class Mimic extends JavaPlugin {
 					for (int z=0; z< MimicList.size(); z++){   // Do for each instance of Mimic
 
 						net.citizensnpcs.api.npc.NPC thisMimic = MimicList.get(z);   // Set specific mimic for comparison
-						List<Player> PlayersInRangeofMimic = new ArrayList(); // List of players
+						List<Player> PlayersInRangeofMimic = new ArrayList<Player>(); // List of players
 
 						int PlayerCount = 0; // Used for counting players, sending messages, etc.
 
@@ -247,7 +240,7 @@ public class Mimic extends JavaPlugin {
 									int WhatShouldWeDo = u.nextInt(MimicTypeMessages.size());
 
 									Random v = new Random();
-									int ClueOrMessage = u.nextInt(4);
+									int ClueOrMessage = v.nextInt(4);
 
 									// Stored Message coming through.... Mimic-style
 									List<String> StoredMimicMessages = getConfig().getStringList(thisMimic.getId() + ".savedmessages");

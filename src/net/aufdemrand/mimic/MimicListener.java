@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import net.citizensnpcs.api.CitizensAPI;
+import net.citizensnpcs.api.npc.NPC;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -52,7 +54,7 @@ public class MimicListener implements Listener {
 
 	public List<net.citizensnpcs.api.npc.NPC> getClosestMimics(Location PlayerLoc, Player player){  // Lets get the closest Mimic NPC entity data using the player entity data and the Player Location
 		Collection<net.citizensnpcs.api.npc.NPC> MimicNPCs = CitizensAPI.getNPCManager().getNPCs(MimicCharacter.class); // Get a collection of Mimic NPCs to check against
-		List<net.citizensnpcs.api.npc.NPC> MimicList = new ArrayList(MimicNPCs); // Turn Collection returned by Citizens into an Arraylist
+		List<net.citizensnpcs.api.npc.NPC> MimicList = new ArrayList<NPC>(MimicNPCs); // Turn Collection returned by Citizens into an Arraylist
 		List<net.citizensnpcs.api.npc.NPC> MimicsInRange = new ArrayList();  // Initialize ArrayList of Mimics within config "chatter-range" of Player
 		int NumberofMimicsInRange = 0;
 		if (MimicNPCs.isEmpty() == false) {  // Let's do this ONLY IF we have Mimics actually in the world
