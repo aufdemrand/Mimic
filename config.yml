@@ -2,20 +2,20 @@
 
 cooldown-in-seconds: 45       # Time between each message/etc update timer. 
                               #   (Recommended 30-90)
-click-cooldown-in-seconds: 5
+click-cooldown-in-seconds: 5  # Number of seconds before a player can reclick the mimic.
 chatter-range: 25             # Distance from Mimic needed to be to hear it.
                               #   (Recommended 10-30)
 text-style: Normal            # Available: Sentence Case, Lower Case, Upper Case, Normal
 use-smart-wrap: True          # Wraps text spanning multiple lines smartly.
 
 
-# TYPES/DIALOG Setup
+# TALK TYPE MIMIC Setup (Note: This is the only type that exists, thus far)
 # You can add as many items to the list as you'd like.
 # You can use <text> to use the mimic's stored messages.
 # Note: <text> also randomly shows the mimic's clue.
 
 talk types:
-  list:               # List each mimic type.
+  list:               # List each mimic type, then enter specifics below.
     - parrot
     - village idiot
     - slime mimic
@@ -25,13 +25,13 @@ talk types:
     Chicken: parrot
     Villager: village idiot
 
-
-                      # And now in detail...
-  parrot:
-    on click:         # Texts on click
+                      
+  parrot:             # And now in detail for each talk mimic type in the list.
+    on click:         # Texts on click -- you can add more entries.
       - "It's a parrot."
       - "You pet the parrot. *BAAAWK!*"
-    texts:            # Texts that trigger randomly.
+    cooldown: "*BAAAWK! ...the parrot is not happy."    # Text triggered when click cooldown isn't met.
+    texts:            # Texts that trigger randomly when players are near.
       - "A parrot squacks, '<text>'"
       - "'<text>' ...is that a parrot?"
       - "You hear a parrot nearby, '*SQUAK*!'"
@@ -44,6 +44,7 @@ talk types:
       - "Oh, it's just the Village Idiot... he's an idiot."
       - "You slug the Village idiot in the arm. *OUCH!*"
       - "The Village Idiot says to you, 'text'"
+    cooldown: "The village idiot says, 'Yaaarrrharrrharr!'"
     texts:
       - "'Yarharrrharr!' ...what the heck was that?"
       - "The village idiot says, '<text>' ...does that even make sense?"
@@ -53,6 +54,7 @@ talk types:
     click:
       - "It's a jelly-like block of slime. Yuck!"
       - "The slime is filled with all kinds of stuff. Who knows where its been?"
+    cooldown: "*SQUISH* *SQUISH*"
     texts:
       - "'<text>' ...was that a slime mimic?"
       - "You hear a slime mimic nearby, '<text>'"

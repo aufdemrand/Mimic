@@ -37,6 +37,11 @@ public class Mimic extends JavaPlugin {
 		}
 
 		Player player = (Player) sender;
+		
+		if (!player.isOp() || !player.hasPermission("mimic.create")) {
+			player.sendMessage(ChatColor.GOLD + "You do not have permission to create or modify Mimics.");
+			return true;
+		}
 
 		if (args[0].equalsIgnoreCase("help")) {
 			player.sendMessage(ChatColor.GOLD + "----- Mimic -----");
@@ -162,8 +167,8 @@ public class Mimic extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		getLogger().log(Level.INFO, "Mimic" + getDescription().getVersion() + ": Settings Saved." );
-		getLogger().log(Level.INFO, "Mimic" + getDescription().getVersion() + ": Sucessfully Unloaded.");
+		getLogger().log(Level.INFO, " v" + getDescription().getVersion() + ": Settings Saved." );
+		getLogger().log(Level.INFO, " v" + getDescription().getVersion() + ": Sucessfully Unloaded.");
 	}
 
 	public int ConfigCooldownInSeconds;
@@ -176,7 +181,7 @@ public class Mimic extends JavaPlugin {
 	@Override
 	public void onEnable() {
 
-		getLogger().log(Level.INFO, "Mimic" + getDescription().getVersion() + ": Loading Config." );
+		getLogger().log(Level.INFO, " v" + getDescription().getVersion() + ": Loading Config." );
 
 		getConfig().options().copyDefaults(true);
 
@@ -186,13 +191,13 @@ public class Mimic extends JavaPlugin {
 		boolean ConfigUseSmartWrap = getConfig().getBoolean("use-smart-wrap", true);
 		String ConfigTextStyle = getConfig().getString("text-style", "Normal");
 
-		getLogger().log(Level.INFO, "Mimic" + getDescription().getVersion() + ": Loading Character." );
-		CitizensAPI.getCharacterManager().registerCharacter(new CharacterFactory(MimicCharacter.class).withName("mimic").withTypes(EntityType.CHICKEN, EntityType.SPIDER));
+		getLogger().log(Level.INFO, " v" + getDescription().getVersion() + ": Loading Character." );
+		CitizensAPI.getCharacterManager().registerCharacter(new CharacterFactory(MimicCharacter.class).withName("mimic"));
 
-		getLogger().log(Level.INFO, "Mimic" + getDescription().getVersion() + ": Loading Listener." );
+		getLogger().log(Level.INFO, " v" + getDescription().getVersion() + ": Loading Listener." );
 		getServer().getPluginManager().registerEvents(new MimicListener(this), this);
 
-		getLogger().log(Level.INFO, "Mimic" + getDescription().getVersion() + ": Loading Chatter Engine." );
+		getLogger().log(Level.INFO, " v" + getDescription().getVersion() + ": Loading Chatter Engine." );
 		this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new Runnable() {
 
 			public void run() {
@@ -285,7 +290,7 @@ public class Mimic extends JavaPlugin {
 
 		}, ConfigCooldownInSeconds * 20, ConfigCooldownInSeconds * 20);
 
-		getLogger().log(Level.INFO, "Mimic" + getDescription().getVersion() + ": Sucessfully Enabled." );
+		getLogger().log(Level.INFO, " v" + getDescription().getVersion() + ": Sucessfully Enabled." );
 	}
 }
 
